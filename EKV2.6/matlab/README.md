@@ -1,6 +1,6 @@
 # MatLab Implementation of EKV 2.6 by Nicola Scolari
 
-Inthis folder you find the MatLab implementation of EKV 2.6 developed by Dr. Nicola Scolari.
+In this directory you find the MatLab implementation of EKV 2.6 developed by Dr. Nicola Scolari.
 
 The ekv.m file is the model code and takes 6 input parameters:
   1. The model parameters.
