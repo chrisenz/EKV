@@ -1,0 +1,43 @@
+* Process type:  0.5um CMOS
+* Process name:  C05M-D (for digital circuits)
+*                C05M-A (= C05M-D + Poly/Poly caps & high-resistivity Poly)
+* Foundry:       Alcatel-Mietec
+
+*  EKV v2.6 NMOS
+*---------------
+.MODEL C05_N NMOS
++ COX    = 3.4e-3
++ XJ     = 0.13e-6
++ VTO    = 0.61
++ GAMMA  = 0.66
++ PHI    = 0.8
++ KP     = 169e-6
++ E0     = 99.0e6
++ UCRIT  = 4.3e6
++ DL     = -0.07e-6
++ DW     = 0.025e-6
++ LAMBDA = 0.27
++ LETA   = 0.39
++ WETA   = 0.1
++ Q0     = 230e-6
++ LK     = 0.66e-6
++ IBA    = 260e6
++ IBB    = 375e6
++ IBN    = 1.0
++ theta  = 0
++ ekvint = 0
++ TCV    = 1.7e-3
++ BEX    = -1.57
++ UCEX   = 1.6
++ IBBT   = 0.0
++ AVTO   = 0.0
++ AKP    = 0.0
++ AGAMMA = 0.0
++ KF     = 1.6E-24
++ AF     = 1
++ NQS    = 0
++ SATLIM = 54.5982
++ XQC    = 0.4
++ EKVDYN = 0
++ TYPE   = 1
++ UPDATE = 26

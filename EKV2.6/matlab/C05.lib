@@ -1,0 +1,509 @@
+* Process type:  0.5um CMOS
+* Process name:  C05M-D (for digital circuits)
+*                C05M-A (= C05M-D + Poly/Poly caps & high-resistivity Poly)
+* Foundry:       Alcatel-Mietec
+
+****************************************************************************
+*                           Global parameters                              *
+****************************************************************************
+
+.PARAM
++ Lambda = 1um   ; Length unit (geometries are defined in 'lambda')
++ Hdif   = 0.9   ; MOS D/S diffusion contact center to gate edge in 'lambda'
++ DefWn  = 1.2   ; Default NMOS width in digital circuits
++ DefWp  = 2.4   ; Default PMOS width in digital circuits
++ DefL   = 0.5   ; Default MOS length in digital circuits
+
++ SqLambda={Lambda*Lambda}
+
+
+****************************************************************************
+*                       Models for analog circuits                         *
+****************************************************************************
+
+.PARAM SVTn=12.3m, SKPn=25m, SVTp=11.2m, SKPp=23m
+
+**********************************************************************
+*  Title:   C05M 0.5um EKV v2.6 MOST Model Parameter Set
+*  Release: preliminary
+*  Date:    98/03/25
+*  Place:   LEG-DE-EPFL
+*  Author:  Matthias Bucher
+*
+*  MOS model version:   EKV v2.6
+*
+**********************************************************************
+*  NOTES:
+*
+*  Extracted from on-wafer DC measurements
+*  (Scribelane CFMF structures, run 125/126, April, 1997)
+*  Geometry range:  W = 10um..0.8um, L = 10um..0.5um
+*  Voltage range:   |Vg| < 3.3V, |Vd| < 3.3V,  |Vs| < 2V
+*
+*  Parameters extracted from the measurements are interpreted as a
+*  "typical case". The table below shows a comparison among "typical
+*  case" electrical parameters (documentation), wafer electrical
+*  parameters and extracted model parameters.
+*
+*  mean values     N doc.  N waf.  N EKVv2.6    P doc.  P waf.  P EKVv2.6
+*  ----------------------------------------------------------------------
+*  vto             0.62    0.63    0.61        -0.58   -0.60   -0.57
+*  gamma           0.65    0.67    0.66         0.70    0.66    0.64
+*  betalin         134u    132.9u  169u         34u     31.7u   39.6u
+*  dl=lmin-leff    0.1u    0.07u   0.07u        0.1u    0.05u   0.05u
+*  dw=wmin-weff    0      -0.01u  -0.025u       0      -0.1u   -0.14u
+*
+*  Note that threshold voltage for the EKV model is extracted in
+*  saturation and is therefore lower; note also that a higher beta (KP)
+*  value is needed for the EKV model to achieve the correct current level.
+*  Overall this new "typical" case may be slightly "slow".
+*
+*  Overall fit is good for all geometries and levels of inversion.
+*  Reverse short-channel effect (RSCE) is present for both NMOS and
+*  PMOS and is well represented by the model, resulting in very good
+*  estimation of threshold voltage over all geometries including
+*  minimum devices. Short-channel PMOS devices in saturation: tendency
+*  to underestimate drain current (less than 10%), while output
+*  conductance is correctly estimated. Effect of substrate current on
+*  PMOS drain characteristics can be neglected.  
+*
+*  Temperature Parameters:    adapted from electrical pars. 
+*  Noise Parameters:          adapted from BSIM3v3 pars.
+*  Worst Case Parameters:     variations are derived from the electrical
+*    parameters and the BSIM3v3 parameter sets. Additional variations are
+*    added for RSH (15%), CJ and CJSW (10%).
+*  Matching Statistical Parameters: derived from electrical pars.
+*    AKP is estimated from the C07 technology.
+*  Series Resistance and Default Geometry calculation:
+*    RS(D)eff = HDIF*RSH/Weff
+*    AS(D)eff = 2*HDIF*Weff
+*    PS(D)eff = 2*HDIF+2*Weff
+*    The value of RSH represents the total resistance encountered
+*    in the current path (i.e. mainly due to the LDD region).
+*  Junction Current Parameters: fitted to electrical pars.
+*    (for reverse-biased junction @Vdmax at T=30, 85, 150 degC.)
+*  
+**********************************************************************
+
+*  EKV v2.6 NMOS
+*---------------
+.MODEL NMOS NMOS (
+*** Setup Parameter
++ LEVEL  = 5 
+*** Intrinsic Model Parameters
++ COX    = {3.4m+VarN*0.21m}           LOT/GAUSS 0.07m
++ XJ     = 0.1u
++ VTO    = {0.61-VarN*0.07}            LOT/GAUSS 0.023
++ GAMMA  = {0.66-VarN*0.1}             LOT/GAUSS 0.033
++ PHI    = 0.8
++ KP     = {169u+VarN*13u}             LOT/GAUSS 4.3u
++ E0     = 99.0Meg
++ UCRIT  = {4.3Meg+VarN*0.43Meg}       LOT/GAUSS 0.14Meg
++ DL     = {-0.07u-VarN*0.08u}         LOT/GAUSS 0.027u
++ DW     = {0.025u+VarN*0.08u}         LOT/GAUSS 0.026u
++ LAMBDA = 0.27
++ LETA   = 0.39
++ WETA   = 0.1
++ Q0     = 230u
++ LK     = 0.66u
+*** Substrate Current Parameters
++ IBN    = 1.0
++ IBA    = 260Meg
++ IBB    = 375Meg
+*** Intrinsic Model Temperature Parameters
++ TNOM   = 25.5
++ TCV    = 1.7m
++ BEX    = -1.57
++ UCEX   = 1.6
++ IBBT   = 0.0
+*** Noise Model Parameters
+*+ KF     = {3.07E-28/2/169u}
++ KF     = 1.6E-24
++ AF     = 1
+*** Short-Distance Matching Statistical Parameters
++ AVTO   = DEV/GAUSS 12.3n
++ AGAMMA = DEV/GAUSS 0
++ AKP    = DEV/GAUSS 25.0n
+*** Series Resistance and Area Calulation Parameters
+*+ ARLEV  = 3 
++ HDIF   = 0.9u
++ RSH    = 560-VarN*84                 LOT/GAUSS 28
+*** Junction Current Parameters (reverse bias)
++ JS     = 6.9u
++ JSW    = 137p
++ N      = 1.94
+*+ DIOLEV = 1
+*+ JS     = 1.33E-7
+*+ JSW    = 2.64E-12
+*+ TLEVI  = 3
+*+ XTI    = 0
+*+ N      = 1.87
+*** Junction Capacitances Parameters
+*+ DCAPLEV = 0 
++ CJ     = {740u-VarN*74u}             LOT/GAUSS 25u
++ CJSW   = {340p-VarN*34p}             LOT/GAUSS 11p
++ MJ     = 0.35
++ MJSW   = 0.29
++ PB     = 0.73
++ PBSW   = 0.659
++ FC     = 0.5
+*** Gate Overlap Capacitances
++ CGSO   = {138p+VarN*9p}              LOT/GAUSS 3p
++ CGDO   = {138p+VarN*9p}              LOT/GAUSS 3p
++ CGBO   = {345p+VarN*22p}             LOT/GAUSS 7p
+)
+
+*  EKV v2.6 PMOS
+*---------------
+.MODEL PMOS PMOS (
+*** Setup Parameter
++ LEVEL  = 5
+*** Intrinsic Model Parameters
++ COX    = {3.4m+VarP*0.21m}           LOT/GAUSS 0.07m
++ XJ     = 0.1u
++ VTO    = {-0.57+VarP*0.08}           LOT/GAUSS 0.027
++ GAMMA  = {0.64-VarP*0.1}             LOT/GAUSS 0.033
++ PHI    = 0.68
++ KP     = {39.6u+VarP*3.5u}           LOT/GAUSS 1.2u
++ E0     = 56.4Meg
++ UCRIT  = 20.0Meg
++ DL     = {-0.05u-VarP*0.08u}         LOT/GAUSS 0.027u
++ DW     = {0.14u+VarP*0.08u}          LOT/GAUSS 0.026u
++ LAMBDA = 1.2
++ LETA   = 0.51
++ WETA   = 0.01
++ Q0     = 180u
++ LK     = 0.67u
+*** Substrate Current Parameters
+*+ IBN    = 1.0
+*+ IBA    = 200Meg
+*+ IBB    = 595Meg
+*** Intrinsic Model Temperature Parameters
++ TNOM   = 25.5
++ TCV    = -1.36m
++ BEX    = -1.22
++ UCEX   = 2.0
+*+ IBBT   = 0
+*** Noise Model Parameters
+*+ KF     = {1.08E-29/2/39.6u}
++ KF     = 2.06E-25
++ AF     = 1
+*** Short-Distance Matching Statistical Parameters
++ AVTO   = DEV/GAUSS 11.2n
++ AGAMMA = DEV/GAUSS 0
++ AKP    = DEV/GAUSS 23.0n
+*** Series Resistance and Area Calulation Parameters
+*+ ARLEV  = 3 
++ HDIF   = 0.9u
++ RSH    = 1230-VarP*164               LOT/GAUSS 55
+*** Junction Current Parameters (reverse bias)
++ JS     = 4.0u
++ JSW    = 730p
++ N      = 1.82
+*+ DIOLEV = 1
+*+ JS     = 7.5E-7
+*+ JSW    = 1.37E-11
+*+ TLEVI  = 3
+*+ XTI    = 0
+*+ N      = 1.77
+*** Junction Capacitances Parameters
+*+ DCAPLEV = 0
++ CJ     = {790u-VarP*79u}             LOT/GAUSS 26u
++ CJSW   = {430p-VarP*43p}             LOT/GAUSS 14p
++ MJ     = 0.4
++ MJSW   = 0.38
++ PB     = 0.85
++ PBSW   = 0.869
++ FC     = 0.5
+*** Gate Overlap Capacitances
++ CGSO   = {138p+VarP*9p}              LOT/GAUSS 3p
++ CGDO   = {138p+VarP*9p}              LOT/GAUSS 3p
++ CGBO   = {345p+VarP*22p}             LOT/GAUSS 7p
+)
+
+
+****************************************************************************
+*          Resistor models   (for device value specified in Ohms)          *
+****************************************************************************
+
+*** Unsalicided Poly Si N  (325 Ohm/sq +/- 25%)
+.MODEL RPOLYN   RES (
++      R      = 1.0                           LOT/GAUSS  8.2%
++      TC1    = -2m
++      TC2    = 4u
+)
+*** Unsalicided N+ diff  (50 Ohm/sq +/- 20%)
+.MODEL RDIFFN   RES (
++      R      = 1.0                           LOT/GAUSS  6.7%
++      TC1    = 1.6m
++      TC2    = 0u
+)
+*** N-well under field  (1.3 Ohm/sq, +/- 23%)
+.MODEL RWELL    RES (
++      R      = 1.0                           LOT/GAUSS  7.7%
++      TC1    = 4.3m
++      TC2    = 14u
+)
+
+*** high-resistivity Poly Si  (1000 Ohm/sq +/- 10%)      !!! C05M-A only !!!
+*** Wel = W - 0.10um, Lel = L - 0.75um
+*** see Mietec C05M-A Design Rule Manual for additionnal informations
+.MODEL RPOLYH   RES (
++      R      = 1.0                           LOT/GAUSS  3.3%
++      TC1    = -1.25m
++      TC2    = 3u
+)
+
+****************************************************************************
+*          Capacitor model   (for device value specified in Farads)        *
+****************************************************************************
+
+*** Poly/Poly2 capacitor      (1.1nF/mm2 +/- 10%)        !!! C05M-A only !!!
+*** with SALICIDED top plate
+*** see Mietec C05M-A Design Rule Manual for additionnal informations
+.MODEL CAPA     CAP (
++      C      = 1.0                           LOT/GAUSS  3.3%
++      VC1    = -100u
++      VC2    = -14u
+)
+*** Poly/Poly2 capacitor      (1.1nF/mm2 +/- 10%)        !!! C05M-A only !!!
+*** with NON-SALICIDED top plate
+*** see Mietec C05M-A Design Rule Manual for additionnal informations
+.MODEL CAPL     CAP (
++      C      = 1.0                           LOT/GAUSS  3.3%
++      VC1    = 20u
++      VC2    = -5u
+)
+
+****************************************************************************
+*                     Parameters for digital circuits                      *
+****************************************************************************
+
+.PARAM
++ Tgate =  100p     ; propagation time in simple gates (=1/DIGFREQ)      [s]
++ Tsw   =  100p     ; switching time in AtoD & DtoA interfaces           [s]
++ Roff  =  1T       ; MOSFET off-resistance                            [Ohm]
++ Cin   =  10f      ; interconnection input parasitic capacitance        [F]
++ Cout  =  10f      ; interconnection output parasitic capacitance       [F]
++ Cox   =  3.4m     ; gate oxide specific capacitance                [F/m^2]
+
++ Vtn   =  0.60     ; NMOS threshold voltage                             [V]
++ Betan =  250u     ; NMOS transconductance parameter                [A/V^2]
++ Cjbn  =  780u     ; NMOS bottom specific junction capacitance      [F/m^2]
++ Cjsn  =  345p     ; NMOS sidewall junction specific capacitance      [F/m]
+
++ Vtp   =  0.58     ; PMOS threshold voltage                             [V]
++ Betap =  70u      ; PMOS transconductance parameter                [A/V^2]
++ Cjbp  =  820u     ; PMOS bottom specific junction capacitance      [F/m^2]
++ Cjsp  =  355p     ; PMOS sidewall junction specific capacitance      [F/m]
+
++ ln2   =  {LOG(2)}
++ Cgn   =  {DefWn*DefL*SqLambda*Cox}
++ Cdn   =  {2*Hdif*DefWn*SqLambda*Cjbn + 2*(2*Hdif+DefWn)*Lambda*Cjsn}
++ Rnon  =  {4.5/(Betan*DefWn/DefL*(VHI-VLO-Vtn))}
++ Cgp   =  {Cox*DefWp*DefL*SqLambda}
++ Cdp   =  {2*Hdif*DefWp*SqLambda*Cjbp + 2*(2*Hdif+DefWp)*Lambda*Cjsp}
++ Rpon  =  {3.4/(Betap*DefWp/DefL*(VHI-VLO-Vtp))}
+
+
+****************************************************************************
+*                       Models for digital circuits                        *
+****************************************************************************
+
+**********************************************************************
+*  Title:   C05M 0.5um EKV v2.6 MOST Model Parameter Set
+*  Release: preliminary
+*  Date:    98/03/25
+*  Place:   LEG-DE-EPFL
+*  Author:  Matthias Bucher
+*
+*  MOS model version:   EKV v2.6
+*
+**********************************************************************
+*  NOTES:
+*
+*  Extracted from on-wafer DC measurements
+*  (Scribelane CFMF structures, run 125/126, April, 1997)
+*  Geometry range:  W = 10um..0.8um, L = 10um..0.5um
+*  Voltage range:   |Vg| < 3.3V, |Vd| < 3.3V,  |Vs| < 2V
+*
+*  Parameters extracted from the measurements are interpreted as a
+*  "typical case". The table below shows a comparison among "typical
+*  case" electrical parameters (documentation), wafer electrical
+*  parameters and extracted model parameters.
+*
+*  mean values     N doc.  N waf.  N EKVv2.6    P doc.  P waf.  P EKVv2.6
+*  ----------------------------------------------------------------------
+*  vto             0.62    0.63    0.61        -0.58   -0.60   -0.57
+*  gamma           0.65    0.67    0.66         0.70    0.66    0.64
+*  betalin         134u    132.9u  169u         34u     31.7u   39.6u
+*  dl=lmin-leff    0.1u    0.07u   0.07u        0.1u    0.05u   0.05u
+*  dw=wmin-weff    0      -0.01u  -0.025u       0      -0.1u   -0.14u
+*
+*  Note that threshold voltage for the EKV model is extracted in
+*  saturation and is therefore lower; note also that a higher beta (KP)
+*  value is needed for the EKV model to achieve the correct current level.
+*  Overall this new "typical" case may be slightly "slow".
+*
+*  Overall fit is good for all geometries and levels of inversion.
+*  Reverse short-channel effect (RSCE) is present for both NMOS and
+*  PMOS and is well represented by the model, resulting in very good
+*  estimation of threshold voltage over all geometries including
+*  minimum devices. Short-channel PMOS devices in saturation: tendency
+*  to underestimate drain current (less than 10%), while output
+*  conductance is correctly estimated. Effect of substrate current on
+*  PMOS drain characteristics can be neglected.  
+*
+*  Temperature Parameters:    adapted from electrical pars. 
+*  Noise Parameters:          adapted from BSIM3v3 pars.
+*  Worst Case Parameters:     variations are derived from the electrical
+*    parameters and the BSIM3v3 parameter sets. Additional variations are
+*    added for RSH (15%), CJ and CJSW (10%).
+*  Matching Statistical Parameters: derived from electrical pars.
+*    AKP is estimated from the C07 technology.
+*  Series Resistance and Default Geometry calculation:
+*    RS(D)eff = HDIF*RSH/Weff
+*    AS(D)eff = 2*HDIF*Weff
+*    PS(D)eff = 2*HDIF+2*Weff
+*    The value of RSH represents the total resistance encountered
+*    in the current path (i.e. mainly due to the LDD region).
+*  Junction Current Parameters: fitted to electrical pars.
+*    (for reverse-biased junction @Vdmax at T=30, 85, 150 degC.)
+*  
+**********************************************************************
+
+*  EKV v2.6 NMOS
+*---------------
+.MODEL N NMOS (
+*** Setup Parameter
++ LEVEL  = 5 
+*** Intrinsic Model Parameters
++ COX    = {3.4m+VarN*0.21m}           LOT/GAUSS 0.07m
++ XJ     = 0.1u
++ VTO    = {0.61-VarN*0.07}            LOT/GAUSS 0.023
++ GAMMA  = {0.66-VarN*0.1}             LOT/GAUSS 0.033
++ PHI    = 0.8
++ KP     = {169u+VarN*13u}             LOT/GAUSS 4.3u
++ E0     = 99.0Meg
++ UCRIT  = {4.3Meg+VarN*0.43Meg}       LOT/GAUSS 0.14Meg
++ DL     = {-0.07u-VarN*0.08u}         LOT/GAUSS 0.027u
++ DW     = {0.025u+VarN*0.08u}         LOT/GAUSS 0.026u
++ LAMBDA = 0.27
++ LETA   = 0.39
++ WETA   = 0.1
++ Q0     = 230u
++ LK     = 0.66u
+*** Substrate Current Parameters
++ IBN    = 1.0
++ IBA    = 260Meg
++ IBB    = 375Meg
+*** Intrinsic Model Temperature Parameters
++ TNOM   = 25.5
++ TCV    = 1.7m
++ BEX    = -1.57
++ UCEX   = 1.6
++ IBBT   = 0.0
+*** Noise Model Parameters
+*+ KF     = {3.07E-28/2/169u}
++ KF     = 1.6E-24
++ AF     = 1
+*** Short-Distance Matching Statistical Parameters
++ AVTO   = DEV/GAUSS 12.3n
++ AGAMMA = DEV/GAUSS 0
++ AKP    = DEV/GAUSS 25.0n
+*** Series Resistance and Area Calulation Parameters
+*+ ARLEV  = 3 
++ HDIF   = 0.9u
++ RSH    = 560-VarN*84                 LOT/GAUSS 28
+*** Junction Current Parameters (reverse bias)
++ JS     = 6.9u
++ JSW    = 137p
++ N      = 1.94
+*+ DIOLEV = 1
+*+ JS     = 1.33E-7
+*+ JSW    = 2.64E-12
+*+ TLEVI  = 3
+*+ XTI    = 0
+*+ N      = 1.87
+*** Junction Capacitances Parameters
+*+ DCAPLEV = 0 
++ CJ     = {740u-VarN*74u}             LOT/GAUSS 25u
++ CJSW   = {340p-VarN*34p}             LOT/GAUSS 11p
++ MJ     = 0.35
++ MJSW   = 0.29
++ PB     = 0.73
++ PBSW   = 0.659
++ FC     = 0.5
+*** Gate Overlap Capacitances
++ CGSO   = {138p+VarN*9p}              LOT/GAUSS 3p
++ CGDO   = {138p+VarN*9p}              LOT/GAUSS 3p
++ CGBO   = {345p+VarN*22p}             LOT/GAUSS 7p
+)
+
+*  EKV v2.6 PMOS
+*---------------
+.MODEL P PMOS (
+*** Setup Parameter
++ LEVEL  = 5
+*** Intrinsic Model Parameters
++ COX    = {3.4m+VarP*0.21m}           LOT/GAUSS 0.07m
++ XJ     = 0.1u
++ VTO    = {-0.57+VarP*0.08}           LOT/GAUSS 0.027
++ GAMMA  = {0.64-VarP*0.1}             LOT/GAUSS 0.033
++ PHI    = 0.68
++ KP     = {39.6u+VarP*3.5u}           LOT/GAUSS 1.2u
++ E0     = 56.4Meg
++ UCRIT  = 20.0Meg
++ DL     = {-0.05u-VarP*0.08u}         LOT/GAUSS 0.027u
++ DW     = {0.14u+VarP*0.08u}          LOT/GAUSS 0.026u
++ LAMBDA = 1.2
++ LETA   = 0.51
++ WETA   = 0.01
++ Q0     = 180u
++ LK     = 0.67u
+*** Substrate Current Parameters
+*+ IBN    = 1.0
+*+ IBA    = 200Meg
+*+ IBB    = 595Meg
+*** Intrinsic Model Temperature Parameters
++ TNOM   = 25.5
++ TCV    = -1.36m
++ BEX    = -1.22
++ UCEX   = 2.0
+*+ IBBT   = 0
+*** Noise Model Parameters
+*+ KF     = {1.08E-29/2/39.6u}
++ KF     = 2.06E-25
++ AF     = 1
+*** Short-Distance Matching Statistical Parameters
++ AVTO   = DEV/GAUSS 11.2n
++ AGAMMA = DEV/GAUSS 0
++ AKP    = DEV/GAUSS 23.0n
+*** Series Resistance and Area Calulation Parameters
+*+ ARLEV  = 3 
++ HDIF   = 0.9u
++ RSH    = 1230-VarP*164               LOT/GAUSS 55
+*** Junction Current Parameters (reverse bias)
++ JS     = 4.0u
++ JSW    = 730p
++ N      = 1.82
+*+ DIOLEV = 1
+*+ JS     = 7.5E-7
+*+ JSW    = 1.37E-11
+*+ TLEVI  = 3
+*+ XTI    = 0
+*+ N      = 1.77
+*** Junction Capacitances Parameters
+*+ DCAPLEV = 0
++ CJ     = {790u-VarP*79u}             LOT/GAUSS 26u
++ CJSW   = {430p-VarP*43p}             LOT/GAUSS 14p
++ MJ     = 0.4
++ MJSW   = 0.38
++ PB     = 0.85
++ PBSW   = 0.869
++ FC     = 0.5
+*** Gate Overlap Capacitances
++ CGSO   = {138p+VarP*9p}              LOT/GAUSS 3p
++ CGDO   = {138p+VarP*9p}              LOT/GAUSS 3p
++ CGBO   = {345p+VarP*22p}             LOT/GAUSS 7p
+)
